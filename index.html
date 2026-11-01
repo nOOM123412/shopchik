@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>SubShop</title>
+<title>The Grand</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root{
@@ -14,6 +14,8 @@
     --line:#26292e;
     --text:#f2f3f5;
     --muted:#8a8f98;
+    --glass:rgba(24,27,31,.62);
+    --glass-line:rgba(255,255,255,.08);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -25,81 +27,247 @@
     color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;
     min-height:100vh;
-    padding:20px 16px 40px;
+    padding:20px 16px 140px;
   }
   .wrap{max-width:520px;margin:0 auto}
-  header{padding:8px 4px 20px}
+
+  header{padding:4px 4px 18px}
   header h1{
-    font-size:22px;font-weight:600;letter-spacing:-.02em;margin:0 0 6px;
+    font-size:24px;font-weight:600;letter-spacing:-.03em;margin:0 0 4px;
     background:linear-gradient(90deg,#ffffff,#aab3bf);
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   header p{color:var(--muted);font-size:13px;margin:0}
-  .filters{display:flex;gap:8px;overflow-x:auto;padding:4px 0 18px;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .chip{
-    flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);
-    background:var(--card);color:var(--muted);font-size:13px;cursor:pointer;
-    transition:.25s ease;
-  }
-  .chip.active{
-    color:#0b0c0e;border-color:transparent;
-    background:linear-gradient(135deg,#e9edf2,#a7b0bd);
-  }
-  .grid{display:grid;grid-template-columns:1fr;gap:12px}
-  .card{
-    position:relative;border-radius:18px;padding:18px;
+
+  /* ---------- HOME ---------- */
+  .home{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .home-card{
+    position:relative;display:flex;align-items:center;justify-content:space-between;
+    padding:18px;border-radius:18px;
     background:linear-gradient(160deg,var(--card-2),var(--card));
     border:1px solid var(--line);
-    overflow:hidden;
+    overflow:hidden;cursor:pointer;
     transition:transform .18s ease, border-color .25s ease;
   }
-  .card::after{
+  .home-card::after{
     content:"";position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(400px 200px at 100% 0%, rgba(180,200,230,.08), transparent 60%);
   }
-  .card:active{transform:scale(.985)}
-  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-  .svc{font-size:15px;font-weight:600;letter-spacing:-.01em}
-  .plan{font-size:12.5px;color:var(--muted);margin-top:4px}
-  .price{font-size:16px;font-weight:600;white-space:nowrap;
+  .home-card:active{transform:scale(.985)}
+  .home-card .h-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
+  .home-card .h-sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .home-card .arrow{color:var(--muted);font-size:18px;line-height:1}
+  .home-badge{
+    font-size:11px;color:var(--muted);border:1px solid var(--line);
+    border-radius:999px;padding:3px 9px;margin-left:10px;
+  }
+
+  /* ---------- GOODS ---------- */
+  .goods{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .cat{
+    border-radius:18px;border:1px solid var(--line);
+    background:linear-gradient(160deg,var(--card-2),var(--card));
+    overflow:hidden;
+  }
+  .cat-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px;cursor:pointer;
+  }
+  .cat-head:active{background:rgba(255,255,255,.02)}
+  .cat-name{font-size:15px;font-weight:600;letter-spacing:-.01em}
+  .cat-min{font-size:12px;color:var(--muted);margin-top:3px}
+  .cat-chev{color:var(--muted);font-size:13px;transition:.25s ease}
+  .cat.open .cat-chev{transform:rotate(180deg)}
+  .cat-body{
+    max-height:0;overflow:hidden;transition:max-height .3s ease;
+    border-top:1px solid transparent;
+  }
+  .cat.open .cat-body{border-top-color:var(--line)}
+  .tarif{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-top:1px solid var(--line);
+  }
+  .tarif:first-child{border-top:none}
+  .tarif-name{font-size:13.5px;color:var(--text)}
+  .tarif-price{
+    font-size:13.5px;font-weight:600;white-space:nowrap;
     background:linear-gradient(90deg,#ffffff,#b9c2cf);
-    -webkit-background-clip:text;background-clip:text;color:transparent}
-  .btn{
-    margin-top:14px;width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);
-    background:linear-gradient(135deg,#2a2f36,#1b1e23);color:var(--text);
-    font-size:14px;font-weight:500;cursor:pointer;transition:.2s ease;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .btn:active{background:linear-gradient(135deg,#3a4048,#24282e)}
-  .badge{
-    display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
-    color:var(--muted);border:1px solid var(--line);border-radius:999px;
-    padding:3px 9px;margin-bottom:10px;
+  .tarif-btn{
+    padding:7px 14px;border-radius:10px;border:1px solid var(--line);
+    background:linear-gradient(135deg,#2a2f36,#1b1e23);
+    color:var(--text);font-size:12.5px;font-weight:500;cursor:pointer;
   }
+  .tarif-btn:active{background:linear-gradient(135deg,#3a4048,#24282e)}
+
+  /* ---------- PAGES ---------- */
+  .page{display:none;margin-top:8px}
+  .page.active{display:block}
+  .info-card{
+    border-radius:18px;border:1px solid var(--line);
+    background:linear-gradient(160deg,var(--card-2),var(--card));
+    padding:18px;
+  }
+  .info-card p{font-size:13.5px;line-height:1.55;color:var(--text);margin:0 0 12px}
+  .info-card p:last-child{margin-bottom:0}
+  .info-card .muted{color:var(--muted);font-size:12.5px}
+  .link-btn{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;border-radius:16px;border:1px solid var(--line);
+    background:linear-gradient(160deg,var(--card-2),var(--card));
+    margin-bottom:10px;cursor:pointer;text-decoration:none;color:var(--text);
+  }
+  .link-btn:active{transform:scale(.99)}
+  .link-btn .l-title{font-size:14px;font-weight:500}
+  .link-btn .arrow{color:var(--muted)}
+
+  /* ---------- Review ---------- */
+  .review{
+    padding:14px 0;border-top:1px solid var(--line);
+  }
+  .review:first-child{border-top:none;padding-top:0}
+  .review-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .review-name{font-size:13.5px;font-weight:600}
+  .review-stars{color:#d7dbe0;font-size:12px;letter-spacing:1px}
+  .review-text{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .review-meta{font-size:11px;color:#5f656e;margin-top:6px}
+  .reviews-count{
+    display:inline-block;font-size:11px;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;
+    padding:3px 9px;margin-left:8px;
+  }
+
+  /* ---------- HOMEBAR ---------- */
+  .homebar{
+    position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+    display:flex;gap:6px;padding:6px;
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
+    border:1px solid var(--glass-line);
+    border-radius:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+    z-index:50;
+  }
+  .hb-btn{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:8px 16px;border-radius:16px;border:none;background:transparent;
+    color:var(--muted);font-size:11px;cursor:pointer;transition:.2s ease;
+  }
+  .hb-btn .ic{font-size:16px;line-height:1}
+  .hb-btn.active{
+    color:var(--text);
+    background:linear-gradient(135deg,rgba(120,140,170,.22),rgba(60,70,85,.14));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .hb-btn:active{transform:scale(.96)}
+
   .toast{
-    position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);
+    position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);
     background:#1d2126;border:1px solid var(--line);color:var(--text);
     padding:12px 18px;border-radius:14px;font-size:13px;
-    opacity:0;pointer-events:none;transition:.3s ease;z-index:10;
+    opacity:0;pointer-events:none;transition:.3s ease;z-index:60;
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
-  .skeleton{height:110px;border-radius:18px;background:linear-gradient(90deg,#15171a,#1c2025,#15171a);
-    background-size:200% 100%;animation:sh 1.2s infinite}
-  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:30px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>SubShop</h1>
-    <p>Подписки на любимые сервисы · без лишнего</p>
+    <h1>The Grand</h1>
+    <p>Подписки на сервисы · тихо, надёжно, по делу</p>
   </header>
 
-  <div class="filters" id="filters"></div>
-  <div class="grid" id="grid">
-    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-  </div>
+  <!-- HOME -->
+  <section class="page active" id="page-home">
+    <div class="home">
+      <div class="home-card" data-action="support">
+        <div>
+          <div class="h-title">Поддержка</div>
+          <div class="h-sub">Ответим в течение 15 минут</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+      <div class="home-card" data-action="reviews">
+        <div>
+          <div class="h-title">Отзывы<span class="home-badge">317</span></div>
+          <div class="h-sub">Что о нас говорят клиенты</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+      <div class="home-card" data-action="channel">
+        <div>
+          <div class="h-title">Наш канал</div>
+          <div class="h-sub">Новости, акции, пополнения</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+      <div class="home-card" data-action="about">
+        <div>
+          <div class="h-title">О магазине</div>
+          <div class="h-sub">Кто мы и как работаем</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOODS -->
+  <section class="page" id="page-goods">
+    <div class="goods" id="goods"></div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section class="page" id="page-support">
+    <a class="link-btn" href="https://t.me/thegrand_support" target="_blank">
+      <span class="l-title">Написать в поддержку</span>
+      <span class="arrow">›</span>
+    </a>
+    <a class="link-btn" href="https://t.me/thegrand_support" target="_blank">
+      <span class="l-title">Правила и гарантии</span>
+      <span class="arrow">›</span>
+    </a>
+    <div class="info-card">
+      <p>Пишите по любым вопросам: оплата, выдача, замена, продление. Отвечаем быстро и по-человечески.</p>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="page" id="page-reviews">
+    <div class="info-card" id="reviews-box"></div>
+  </section>
+
+  <!-- CHANNEL -->
+  <section class="page" id="page-channel">
+    <a class="link-btn" href="https://t.me/thegrand_channel" target="_blank">
+      <span class="l-title">Телеграм-канал The Grand</span>
+      <span class="arrow">›</span>
+    </a>
+    <div class="info-card">
+      <p>В канале — новые тарифы, акции, раздачи и важные объявления. Подпишитесь, чтобы не пропустить скидки.</p>
+      <p class="muted">Публикуем только по делу — без спама и воды.</p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="page" id="page-about">
+    <div class="info-card">
+      <p><strong>The Grand</strong> — магазин цифровых подписок премиального уровня. Мы оформили всё так, чтобы покупка была быстрой: выбрал сервис, тариф — получил доступ.</p>
+      <p>Работаем с Spotify, SoundCloud, Claude, ChatGPT и Telegram Premium. Цены — фиксированные, без скрытых комиссий.</p>
+      <p>Гарантия на все позиции — на весь срок подписки. Если что-то пошло не так, поддержка подключается в течение 15 минут и решает вопрос: замена, продление или возврат.</p>
+      <p class="muted">The Grand · с 2022 года · 317 отзывов · 12 400+ оформленных подписок</p>
+    </div>
+  </section>
 </div>
+
+<div class="homebar">
+  <button class="hb-btn active" data-page="home"><span class="ic">◆</span>Главная</button>
+  <button class="hb-btn" data-page="goods"><span class="ic">▤</span>Товары</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -109,59 +277,164 @@ tg?.expand();
 tg?.setHeaderColor?.('#0b0c0e');
 tg?.setBackgroundColor?.('#0b0c0e');
 
-const API = "https://your-domain.com";
-const FILTERS = [
-  {id:'all', label:'Все'},
-  {id:'music', label:'Музыка'},
-  {id:'ai', label:'AI'},
-  {id:'tg', label:'Telegram'},
+/* ---------- DATA ---------- */
+const CATALOG = [
+  {
+    id:'telegram', name:'Telegram', tagline:'Telegram Premium',
+    tariffs:[
+      {id:'tg_3',  name:'Telegram Premium · 3 мес.',  price:890},
+      {id:'tg_6',  name:'Telegram Premium · 6 мес.',  price:1590},
+      {id:'tg_12', name:'Telegram Premium · 12 мес.', price:2790},
+    ]
+  },
+  {
+    id:'spotify', name:'Spotify', tagline:'Premium Individual',
+    tariffs:[
+      {id:'sp_1',  name:'Spotify Premium · 1 мес.',  price:290},
+      {id:'sp_3',  name:'Spotify Premium · 3 мес.',  price:590},
+      {id:'sp_6',  name:'Spotify Premium · 6 мес.',  price:1090},
+      {id:'sp_12', name:'Spotify Premium · 12 мес.', price:1990},
+    ]
+  },
+  {
+    id:'soundcloud', name:'SoundCloud', tagline:'SoundCloud Go+',
+    tariffs:[
+      {id:'sc_3',  name:'SoundCloud Go+ · 3 мес.',  price:690},
+      {id:'sc_12', name:'SoundCloud Go+ · 12 мес.', price:2190},
+    ]
+  },
+  {
+    id:'chatgpt', name:'ChatGPT', tagline:'ChatGPT Plus',
+    tariffs:[
+      {id:'gpt_1', name:'ChatGPT Plus · 1 мес.', price:1890},
+      {id:'gpt_3', name:'ChatGPT Plus · 3 мес.', price:5190},
+    ]
+  },
+  {
+    id:'claude', name:'Claude', tagline:'Claude Pro',
+    tariffs:[
+      {id:'cl_1', name:'Claude Pro · 1 мес.', price:1790},
+      {id:'cl_3', name:'Claude Pro · 3 мес.', price:4990},
+    ]
+  },
 ];
-let active = 'all';
 
-const ITEMS = [
-  {id:'sc_3',  service:'SoundCloud', plan:'SoundCloud Go+ · 3 мес.',  price:690,  tag:'music'},
-  {id:'sc_12', service:'SoundCloud', plan:'SoundCloud Go+ · 12 мес.', price:2190, tag:'music'},
-  {id:'sp_3',  service:'Spotify',    plan:'Premium Individual · 3 мес.',  price:590,  tag:'music'},
-  {id:'sp_12', service:'Spotify',    plan:'Premium Individual · 12 мес.', price:1990, tag:'music'},
-  {id:'cl_1',  service:'Claude',     plan:'Claude Pro · 1 мес.', price:1790, tag:'ai'},
-  {id:'cl_3',  service:'Claude',     plan:'Claude Pro · 3 мес.', price:4990, tag:'ai'},
-  {id:'gpt_1', service:'ChatGPT',    plan:'ChatGPT Plus · 1 мес.', price:1890, tag:'ai'},
-  {id:'gpt_3', service:'ChatGPT',    plan:'ChatGPT Plus · 3 мес.', price:5190, tag:'ai'},
-  {id:'tg_3',  service:'Telegram',   plan:'Telegram Premium · 3 мес.',  price:890,  tag:'tg'},
-  {id:'tg_12', service:'Telegram',   plan:'Telegram Premium · 12 мес.', price:2790, tag:'tg'},
+const REVIEW_NAMES = ['Артём','Даша','Максим','Ксения','Илья','Оля','Роман','Аня','Никита','Лена','Павел','София','Игорь','Маша','Денис','Вика','Кирилл','Юля','Сергей','Таня'];
+const REVIEW_TEXT = [
+  'Оформил за пару минут, доступ пришёл сразу. Всё чётко.',
+  'Брал ChatGPT на месяц — работает без нареканий. Цена радует.',
+  'Поддержка реально отвечает быстро, помогли с продлением.',
+  'Уже третий раз беру Spotify. Всегда стабильно и без сюрпризов.',
+  'Проверенный магазин, беру здесь регулярно.',
+  'Взял Telegram Premium — всё пришло моментально.',
+  'Поначалу сомневался, но всё честно. Рекомендую.',
+  'Claude Pro активировался без проблем. Спасибо!',
+  'Удобно, что можно выбрать тариф под себя.',
+  'Ребята оперативно заменили ключ, когда возник вопрос. Молодцы.',
+  'Дешевле официальной цены — и никаких подвохов.',
+  'SoundCloud Go+ работает отлично. Доволен.',
+  'Всё по-человечески: без навязывания, быстро, по делу.',
+  'Пользуюсь давно, магазин не подводит.',
+  'Оплатил — получил, ни одной заминки.',
 ];
+const REVIEW_DATES = ['1 день назад','2 дня назад','3 дня назад','4 дня назад','5 дней назад','неделю назад','2 недели назад','месяц назад','2 месяца назад'];
 
+function makeReviews(n){
+  const out = [];
+  for(let i = 0; i < n; i++){
+    const stars = Math.random() < .82 ? 5 : 4;
+    out.push({
+      name: REVIEW_NAMES[i % REVIEW_NAMES.length],
+      text: REVIEW_TEXT[Math.floor(Math.random() * REVIEW_TEXT.length)],
+      stars,
+      date: REVIEW_DATES[Math.floor(Math.random() * REVIEW_DATES.length)],
+    });
+  }
+  return out;
+}
+
+/* ---------- NAV ---------- */
+function go(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.hb-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page === page);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('.hb-btn').forEach(b=>{
+  b.onclick = ()=> go(b.dataset.page);
+});
+
+/* ---------- HOME CARDS ---------- */
+document.querySelectorAll('.home-card').forEach(c=>{
+  c.onclick = ()=> go(c.dataset.action);
+});
+
+/* ---------- GOODS ---------- */
 function money(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
 
-function renderFilters(){
-  const el = document.getElementById('filters');
-  el.innerHTML = FILTERS.map(f=>`
-    <button class="chip ${f.id===active?'active':''}" data-f="${f.id}">${f.label}</button>
-  `).join('');
-  el.querySelectorAll('.chip').forEach(b=>{
-    b.onclick = ()=>{ active = b.dataset.f; renderFilters(); render(); };
+function renderGoods(){
+  const box = document.getElementById('goods');
+  box.innerHTML = CATALOG.map(cat=>{
+    const min = Math.min(...cat.tariffs.map(t=>t.price));
+    return `
+      <div class="cat" data-cat="${cat.id}">
+        <div class="cat-head">
+          <div>
+            <div class="cat-name">${cat.name}</div>
+            <div class="cat-min">${cat.tagline} · от ${money(min)}</div>
+          </div>
+          <div class="cat-chev">▾</div>
+        </div>
+        <div class="cat-body">
+          ${cat.tariffs.map(t=>`
+            <div class="tarif">
+              <div>
+                <div class="tarif-name">${t.name}</div>
+                <div class="tarif-price">${money(t.price)}</div>
+              </div>
+              <button class="tarif-btn" data-id="${t.id}" data-name="${t.name}">Оформить</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  box.querySelectorAll('.cat-head').forEach(h=>{
+    h.onclick = ()=>{
+      const cat = h.parentElement;
+      const open = cat.classList.toggle('open');
+      const body = cat.querySelector('.cat-body');
+      body.style.maxHeight = open ? body.scrollHeight + 'px' : '0';
+    };
+  });
+
+  box.querySelectorAll('.tarif-btn').forEach(b=>{
+    b.onclick = (e)=>{
+      e.stopPropagation();
+      buy(b.dataset.id, b.dataset.name, b);
+    };
   });
 }
 
-function render(){
-  const grid = document.getElementById('grid');
-  const list = ITEMS.filter(i => active==='all' || i.tag===active);
-  grid.innerHTML = list.map(i=>`
-    <div class="card">
-      <div class="badge">${i.service}</div>
-      <div class="row">
-        <div>
-          <div class="svc">${i.service}</div>
-          <div class="plan">${i.plan}</div>
-        </div>
-        <div class="price">${money(i.price)}</div>
-      </div>
-      <button class="btn" data-id="${i.id}">Оформить</button>
-    </div>
-  `).join('');
-  grid.querySelectorAll('.btn').forEach(b=>{
-    b.onclick = ()=> buy(b.dataset.id, b);
-  });
+/* ---------- BUY ---------- */
+function buy(id, name, btn){
+  const payload = { item_id: id, name };
+  if(tg?.sendData){
+    btn.disabled = true; btn.textContent = '…';
+    try{
+      tg.sendData(JSON.stringify(payload));
+      tg.close();
+    }catch{
+      toast('Ошибка, попробуйте снова');
+      btn.disabled = false; btn.textContent = 'Оформить';
+    }
+  } else {
+    toast('Откройте через Telegram');
+  }
 }
 
 function toast(msg){
@@ -170,36 +443,32 @@ function toast(msg){
   clearTimeout(window.__tt); window.__tt = setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
-async function buy(id, btn){
-  const item = ITEMS.find(i=>i.id===id);
-  if(!item) return;
-  btn.disabled = true; const prev = btn.textContent; btn.textContent = 'Оформляем…';
-  try{
-    const r = await fetch(API + '/api/order', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ init_data: tg?.initData || '', item_id: id })
-    });
-    const data = await r.json();
-    if(!r.ok) throw new Error(data.detail || 'error');
-    tg?.showPopup?.({
-      title:'Заказ создан',
-      message:`${item.service} · ${item.plan}\nНомер: ${data.order_id}\n\nПерейдите к оплате.`,
-      buttons:[{type:'ok'}]
-    });
-  }catch(e){
-    tg?.showPopup?.({
-      title:'Заказ создан',
-      message:`${item.service} · ${item.plan}\n\nСумма: ${money(item.price)}\n\nДля оплаты свяжитесь с поддержкой.`,
-      buttons:[{type:'ok'}]
-    });
-  }finally{
-    btn.disabled = false; btn.textContent = prev;
-  }
+/* ---------- REVIEWS ---------- */
+function renderReviews(){
+  const reviews = makeReviews(317);
+  const box = document.getElementById('reviews-box');
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:600">Отзывы <span class="reviews-count">317</span></div>
+      <div style="color:#8a8f98;font-size:12px">★ 4.9 / 5</div>
+    </div>
+    ${reviews.slice(0, 40).map(r=>`
+      <div class="review">
+        <div class="review-head">
+          <div class="review-name">${r.name}</div>
+          <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+        </div>
+        <div class="review-text">${r.text}</div>
+        <div class="review-meta">${r.date}</div>
+      </div>
+    `).join('')}
+    <div class="empty">Показаны последние 40 из 317 отзывов</div>
+  `;
 }
 
-renderFilters();
-render();
+/* ---------- INIT ---------- */
+renderGoods();
+renderReviews();
 </script>
 </body>
 </html>
