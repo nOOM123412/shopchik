@@ -1,32 +1,26 @@
-import asyncio, os
+import asyncio
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import (
-    Message, CallbackQuery,
-    InlineKeyboardMarkup, InlineKeyboardButton,
-    WebAppInfo,
-)
+from aiogram.types import Message, CallbackQuery, WebAppInfo
 from aiogram.filters import CommandStart
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from dotenv import load_dotenv
 
-load_dotenv()
-BOT_TOKEN = os.getenv("9137635106:AAHyiCxAFTKxnWiQB6LgvN2LLQsjJdE4DOQ")
-WEBAPP_URL = os.getenv("https://noom123412.github.io/shopchik/")
+BOT_TOKEN = "9137635106:AAHyiCxAFTKxnWi0B6LgvN2LLQsJJdE4DOQ"
+WEBAPP_URL = "https://noom123412.github.io/shopchik/"
 
 bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
 WELCOME = (
-    "🖤 <b>SubShop</b>\n\n"
-    "Подписки на SoundCloud, Spotify, Claude, ChatGPT и Telegram + Premium.\n"
-    "Аккуратно, быстро, без лишнего.\n\n"
+    "🖤 <b>The Grand</b>\n\n"
+    "Подписки на SoundCloud, Spotify, Claude, ChatGPT и Telegram Premium.\n"
+    "Тихо, надёжно, по делу.\n\n"
     "Нажмите кнопку ниже, чтобы открыть магазин."
 )
 
 def main_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text="🛍 Открыть магазин", web_app=WebAppInfo(url=WEBAPP_URL))
-    kb.button(text="ℹ️ О сервисе", callback_data="about")
+    kb.button(text="ℹ️ О магазине", callback_data="about")
     kb.adjust(1)
     return kb.as_markup()
 
@@ -37,9 +31,9 @@ async def start(m: Message):
 @dp.callback_query(F.data == "about")
 async def about(cb: CallbackQuery):
     await cb.message.answer(
-        "SubShop — магазин подписок.\n"
-        "Оплата через Telegram Stars / крипту / карту (настраивается на бэкенде).\n"
-        "После оплаты доступ выдаётся автоматически."
+        "The Grand — магазин цифровых подписок.\n"
+        "Работаем с 2022 года. Гарантия на весь срок подписки.\n"
+        "Поддержка отвечает в течение 15 минут."
     )
     await cb.answer()
 
