@@ -11,8 +11,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from dotenv import load_dotenv
 
 load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBAPP_URL = os.getenv("WEBAPP_URL")
+BOT_TOKEN = os.getenv("9137635106:AAHyiCxAFTKxnWiQB6LgvN2LLQsjJdE4DOQ")
+WEBAPP_URL = os.getenv("https://noom123412.github.io/shopchik/")
 
 bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
